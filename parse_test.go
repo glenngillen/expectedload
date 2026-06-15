@@ -140,13 +140,11 @@ func TestParseComment_MetaFields(t *testing.T) {
 	}
 }
 
-func TestParseComment_CacheFields(t *testing.T) {
+func TestParseComment_RequestRate(t *testing.T) {
 	el, diags := ParseComment(JSDoc, "/**\n"+
 		" * @expected-load\n"+
-		" *   monthly-calls: 1_000\n"+
-		" *   cached-input-tokens: 10_000\n"+
-		" *   cache-key-count: 1\n"+
-		" *   cache-ttl: 1h\n"+
+		" *   monthly-calls: 1_000_000\n"+
+		" *   requests-per-active-minute: 120\n"+
 		" */")
 	if el == nil {
 		t.Fatal("expected a declaration")
@@ -154,14 +152,11 @@ func TestParseComment_CacheFields(t *testing.T) {
 	if len(diags) != 0 {
 		t.Fatalf("unexpected diagnostics: %+v", diags)
 	}
-	if got, _ := el.Get("cached_input_tokens"); got != 10000 {
-		t.Errorf("cached_input_tokens = %d, want 10000", got)
+	if got, _ := el.Get("monthly_calls"); got != 1_000_000 {
+		t.Errorf("monthly_calls = %d, want 1000000", got)
 	}
-	if got, _ := el.Get("cache_key_count"); got != 1 {
-		t.Errorf("cache_key_count = %d, want 1", got)
-	}
-	if el.CacheTTL != "1h" {
-		t.Errorf("CacheTTL = %q, want 1h", el.CacheTTL)
+	if got, _ := el.Get("requests_per_active_minute"); got != 120 {
+		t.Errorf("requests_per_active_minute = %d, want 120", got)
 	}
 }
 

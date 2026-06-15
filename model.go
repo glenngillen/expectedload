@@ -45,10 +45,6 @@ type ExpectedLoad struct {
 	LastUpdated string
 	// Source is one of "manual", "observed", "estimated" (empty if unset).
 	Source string
-	// CacheTTL is the prompt-cache time-to-live, normalized to "5m" or "1h"
-	// (empty if unset). Selects the cache-write price tier for providers with a
-	// write premium (Anthropic).
-	CacheTTL string
 }
 
 // Get returns a load field value and whether it was present.
@@ -93,14 +89,14 @@ var (
 // tolerated for forward-compatibility, but a close miss triggers a
 // "did you mean" diagnostic.
 var knownFields = []string{
-	// AI module (v1)
+	// AI module (v1) — pure load facts. Caching cost (prefix size, TTL, keys,
+	// hit rate) is derived by the analyzer from the prompt structure + the
+	// request pattern below, never declared as caching knowledge here.
 	"monthly_calls",
 	"avg_input_tokens",
 	"avg_output_tokens",
 	"avg_conversation_turns",
-	// AI prompt-caching (cache_ttl is a string meta field, handled separately)
-	"cached_input_tokens", // cacheable prefix tokens per call (subset of avg_input_tokens)
-	"cache_key_count",     // distinct cached prefixes traffic splits across (1 = one shared prefix); drives the hit rate
+	"requests_per_active_minute", // request rate while the workload is active — captures the spacing/burstiness that monthly volume alone misses
 	// Terraform (representative; full set in inline-usage-plan.md)
 	"monthly_requests",
 	"request_duration_ms",
