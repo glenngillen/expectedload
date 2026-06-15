@@ -145,7 +145,7 @@ func TestParseComment_CacheFields(t *testing.T) {
 		" * @expected-load\n"+
 		" *   monthly-calls: 1_000\n"+
 		" *   cached-input-tokens: 10_000\n"+
-		" *   cache-hit-rate: 90\n"+
+		" *   cache-key-count: 1\n"+
 		" *   cache-ttl: 1h\n"+
 		" */")
 	if el == nil {
@@ -157,8 +157,8 @@ func TestParseComment_CacheFields(t *testing.T) {
 	if got, _ := el.Get("cached_input_tokens"); got != 10000 {
 		t.Errorf("cached_input_tokens = %d, want 10000", got)
 	}
-	if got, _ := el.Get("cache_hit_rate"); got != 90 {
-		t.Errorf("cache_hit_rate = %d, want 90", got)
+	if got, _ := el.Get("cache_key_count"); got != 1 {
+		t.Errorf("cache_key_count = %d, want 1", got)
 	}
 	if el.CacheTTL != "1h" {
 		t.Errorf("CacheTTL = %q, want 1h", el.CacheTTL)
@@ -211,11 +211,11 @@ func TestParseComment_MalformedValue(t *testing.T) {
 
 func TestNormalizeKey(t *testing.T) {
 	cases := map[string]string{
-		"monthly-calls":   "monthly_calls",
-		"monthly_calls":   "monthly_calls",
-		"monthlyCalls":    "monthly_calls",
-		"Monthly Calls":   "monthly_calls",
-		"avgInputTokens":  "avg_input_tokens",
+		"monthly-calls":    "monthly_calls",
+		"monthly_calls":    "monthly_calls",
+		"monthlyCalls":     "monthly_calls",
+		"Monthly Calls":    "monthly_calls",
+		"avgInputTokens":   "avg_input_tokens",
 		"request.duration": "request_duration",
 	}
 	for in, want := range cases {

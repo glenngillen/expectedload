@@ -100,7 +100,7 @@ var knownFields = []string{
 	"avg_conversation_turns",
 	// AI prompt-caching (cache_ttl is a string meta field, handled separately)
 	"cached_input_tokens", // cacheable prefix tokens per call (subset of avg_input_tokens)
-	"cache_hit_rate",      // percent of cached-prefix sends served from cache (0-100)
+	"cache_key_count",     // distinct cached prefixes traffic splits across (1 = one shared prefix); drives the hit rate
 	// Terraform (representative; full set in inline-usage-plan.md)
 	"monthly_requests",
 	"request_duration_ms",
