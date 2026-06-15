@@ -154,6 +154,8 @@ func build(pairs []orderedPair) (*ExpectedLoad, []Diagnostic) {
 			}
 		case "last_updated":
 			el.LastUpdated = val
+		case "cache_ttl":
+			el.CacheTTL = normalizeTTL(val)
 		default:
 			n, ok := parseLoadValue(val)
 			if !ok {

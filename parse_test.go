@@ -140,6 +140,31 @@ func TestParseComment_MetaFields(t *testing.T) {
 	}
 }
 
+func TestParseComment_CacheFields(t *testing.T) {
+	el, diags := ParseComment(JSDoc, "/**\n"+
+		" * @expected-load\n"+
+		" *   monthly-calls: 1_000\n"+
+		" *   cached-input-tokens: 10_000\n"+
+		" *   cache-hit-rate: 90\n"+
+		" *   cache-ttl: 1h\n"+
+		" */")
+	if el == nil {
+		t.Fatal("expected a declaration")
+	}
+	if len(diags) != 0 {
+		t.Fatalf("unexpected diagnostics: %+v", diags)
+	}
+	if got, _ := el.Get("cached_input_tokens"); got != 10000 {
+		t.Errorf("cached_input_tokens = %d, want 10000", got)
+	}
+	if got, _ := el.Get("cache_hit_rate"); got != 90 {
+		t.Errorf("cache_hit_rate = %d, want 90", got)
+	}
+	if el.CacheTTL != "1h" {
+		t.Errorf("CacheTTL = %q, want 1h", el.CacheTTL)
+	}
+}
+
 func TestParseComment_AbsenceIsNotAnError(t *testing.T) {
 	el, diags := ParseComment(Python, "# just a normal comment\n# nothing to see here")
 	if el != nil {

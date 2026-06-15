@@ -45,6 +45,10 @@ type ExpectedLoad struct {
 	LastUpdated string
 	// Source is one of "manual", "observed", "estimated" (empty if unset).
 	Source string
+	// CacheTTL is the prompt-cache time-to-live, normalized to "5m" or "1h"
+	// (empty if unset). Selects the cache-write price tier for providers with a
+	// write premium (Anthropic).
+	CacheTTL string
 }
 
 // Get returns a load field value and whether it was present.
@@ -94,6 +98,9 @@ var knownFields = []string{
 	"avg_input_tokens",
 	"avg_output_tokens",
 	"avg_conversation_turns",
+	// AI prompt-caching (cache_ttl is a string meta field, handled separately)
+	"cached_input_tokens", // cacheable prefix tokens per call (subset of avg_input_tokens)
+	"cache_hit_rate",      // percent of cached-prefix sends served from cache (0-100)
 	// Terraform (representative; full set in inline-usage-plan.md)
 	"monthly_requests",
 	"request_duration_ms",

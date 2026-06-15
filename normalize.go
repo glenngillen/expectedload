@@ -71,6 +71,19 @@ func parseLoadValue(raw string) (int64, bool) {
 	return n, true
 }
 
+// normalizeTTL maps the various spellings of a cache TTL onto the two values
+// Anthropic supports: "5m" (5-minute, default) and "1h" (1-hour). Anything that
+// looks hour-ish normalizes to "1h"; everything else to "5m".
+func normalizeTTL(raw string) string {
+	s := strings.ToLower(strings.TrimSpace(raw))
+	switch {
+	case strings.Contains(s, "1h"), strings.Contains(s, "60m"), strings.Contains(s, "hour"), s == "3600s", s == "3600":
+		return "1h"
+	default:
+		return "5m"
+	}
+}
+
 // closestField returns the known field within edit distance 2 of key, for
 // "did you mean" diagnostics. Returns "" when nothing is close.
 func closestField(key string) string {
