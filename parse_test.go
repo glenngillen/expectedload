@@ -181,7 +181,7 @@ func TestParseComment_UnknownFieldSuggestion(t *testing.T) {
 	if diags[0].Severity != Warning {
 		t.Errorf("severity = %v, want Warning", diags[0].Severity)
 	}
-	want := `unknown field "monthy_calls" — did you mean "monthly_calls"?`
+	want := `unknown field "monthy_calls" — did you mean "monthly_calls"? (see https://expectedload.dev)`
 	if diags[0].Message != want {
 		t.Errorf("message = %q, want %q", diags[0].Message, want)
 	}

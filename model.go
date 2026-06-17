@@ -10,6 +10,11 @@
 // vendored or re-published unbranded (see plan Phase 9).
 package expectedload
 
+// SpecURL is the canonical home of the Expected Load specification, where the
+// declaration format and field vocabulary are documented. Diagnostics reference
+// it so anyone who hits one can find the spec and learn how to populate the data.
+const SpecURL = "https://expectedload.dev"
+
 // Syntax selects which comment grammar a frontend should strip before the
 // shared key/value parser runs.
 type Syntax int
