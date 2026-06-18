@@ -10,6 +10,8 @@
 // vendored or re-published unbranded (see plan Phase 9).
 package expectedload
 
+import "strings"
+
 // SpecURL is the canonical home of the Expected Load specification, where the
 // declaration format and field vocabulary are documented. Diagnostics reference
 // it so anyone who hits one can find the spec and learn how to populate the data.
@@ -21,41 +23,50 @@ const SpecURL = "https://expectedload.dev"
 const SpecMarkdownURL = "https://expectedload.dev/spec.md"
 
 // Example returns a minimal, copy-pasteable expected-load declaration in the
-// comment grammar for the given language: the three core AI load fields, placed
-// immediately above the call. A URL alone tells a reader (or an agent acting on
-// a missing-expected-load diagnostic) that a declaration is needed but not how
-// to write one in this language — this gives them the exact syntax. The full
-// field set and meta fields live at SpecURL.
-func Example(s Syntax) string {
-	switch s {
-	case Python:
-		return "# expected-load:\n" +
-			"#   monthly_calls: 100_000\n" +
-			"#   avg_input_tokens: 1_200\n" +
-			"#   avg_output_tokens: 500"
-	case GoDirective:
-		return "//expected-load:\n" +
-			"//  monthly_calls: 100_000\n" +
-			"//  avg_input_tokens: 1_200\n" +
-			"//  avg_output_tokens: 500"
-	case Rustdoc:
-		return "/// expected-load:\n" +
-			"///   monthly_calls: 100_000\n" +
-			"///   avg_input_tokens: 1_200\n" +
-			"///   avg_output_tokens: 500"
-	case Terraform:
-		return "# expected-load:\n" +
-			"#   monthly_calls: 100_000\n" +
-			"#   avg_input_tokens: 1_200\n" +
-			"#   avg_output_tokens: 500"
-	default: // JSDoc, Javadoc
-		return "/**\n" +
-			" * @expected-load\n" +
-			" *   monthly_calls: 100_000\n" +
-			" *   avg_input_tokens: 1_200\n" +
-			" *   avg_output_tokens: 500\n" +
-			" */"
+// comment grammar for the given language, placed immediately above the call. A
+// URL alone tells a reader (or an agent acting on a missing-expected-load
+// diagnostic) that a declaration is needed but not how to write one in this
+// language — this gives them the exact syntax. When caching is true it also
+// includes the load inputs needed to estimate prompt-cache hit rates (and so
+// cached cost) for models that support caching. The full field set and meta
+// fields live at SpecURL.
+func Example(s Syntax, caching bool) string {
+	fields := [][2]string{
+		{"monthly_calls", "100_000"},
+		{"avg_input_tokens", "1_200"},
+		{"avg_output_tokens", "500"},
 	}
+	if caching {
+		fields = append(fields,
+			[2]string{"requests_per_active_minute", "60"},
+			[2]string{"avg_conversation_turns", "1"},
+		)
+	}
+
+	var open, header, item, closer string
+	switch s {
+	case Python, Terraform:
+		header, item = "# expected-load:", "#   "
+	case GoDirective:
+		header, item = "//expected-load:", "//  "
+	case Rustdoc:
+		header, item = "/// expected-load:", "///   "
+	default: // JSDoc, Javadoc
+		open, header, item, closer = "/**", " * @expected-load", " *   ", " */"
+	}
+
+	var b strings.Builder
+	if open != "" {
+		b.WriteString(open + "\n")
+	}
+	b.WriteString(header)
+	for _, f := range fields {
+		b.WriteString("\n" + item + f[0] + ": " + f[1])
+	}
+	if closer != "" {
+		b.WriteString("\n" + closer)
+	}
+	return b.String()
 }
 
 // Syntax selects which comment grammar a frontend should strip before the

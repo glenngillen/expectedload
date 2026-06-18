@@ -7,7 +7,7 @@ import "testing"
 // diagnostic would emit something the parser rejects.
 func TestExampleRoundTrips(t *testing.T) {
 	for _, s := range []Syntax{Terraform, JSDoc, Python, GoDirective, Javadoc, Rustdoc} {
-		el, diags := ParseComment(s, Example(s))
+		el, diags := ParseComment(s, Example(s, false))
 		if el == nil {
 			t.Errorf("syntax %d: Example did not parse to a declaration", s)
 			continue
@@ -50,5 +50,26 @@ func TestModelFieldParses(t *testing.T) {
 	el2, _ := ParseComment(JSDoc, inline)
 	if el2 == nil || el2.Model != "anthropic.claude-opus-4-8-v1:0" {
 		t.Errorf("inline: model = %q (el=%v)", func() string { if el2 != nil { return el2.Model }; return "" }(), el2)
+	}
+}
+
+// The caching variant adds the load inputs needed to estimate cached cost and
+// still parses cleanly.
+func TestExampleCachingFields(t *testing.T) {
+	for _, s := range []Syntax{JSDoc, Python, GoDirective, Rustdoc, Terraform} {
+		el, diags := ParseComment(s, Example(s, true))
+		if el == nil {
+			t.Fatalf("syntax %d: caching example did not parse", s)
+		}
+		for _, d := range diags {
+			if d.Severity == Error {
+				t.Errorf("syntax %d: error diagnostic: %s", s, d.Message)
+			}
+		}
+		for _, f := range []string{"monthly_calls", "requests_per_active_minute", "avg_conversation_turns"} {
+			if _, ok := el.Fields[f]; !ok {
+				t.Errorf("syntax %d: caching example missing %q (got %v)", s, f, el.Fields)
+			}
+		}
 	}
 }
