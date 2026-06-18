@@ -93,6 +93,12 @@ type ExpectedLoad struct {
 	LastUpdated string
 	// Source is one of "manual", "observed", "estimated" (empty if unset).
 	Source string
+	// Model optionally pins the model identifier for AI call sites whose model a
+	// consumer can't resolve from code (e.g. a dependency-injected client). It is
+	// an explicit fallback — consumers SHOULD still prefer a value resolved from
+	// the code and treat a declared model that contradicts the resolved one as a
+	// mismatch to flag. Empty when unset.
+	Model string
 }
 
 // Get returns a load field value and whether it was present.

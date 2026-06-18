@@ -154,6 +154,11 @@ func build(pairs []orderedPair) (*ExpectedLoad, []Diagnostic) {
 			}
 		case "last_updated":
 			el.LastUpdated = val
+		case "model":
+			// An optional pin for the model identifier when a consumer can't infer
+			// it from code (e.g. a dependency-injected client). Stored verbatim —
+			// model ids carry dots/colons/slashes that must not be normalized.
+			el.Model = val
 		default:
 			n, ok := parseLoadValue(val)
 			if !ok {
