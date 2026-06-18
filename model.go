@@ -15,6 +15,49 @@ package expectedload
 // it so anyone who hits one can find the spec and learn how to populate the data.
 const SpecURL = "https://expectedload.dev"
 
+// SpecMarkdownURL is the raw Markdown of the specification, served on the same
+// domain. Diagnostics point at this (rather than the HTML homepage) so an agent
+// acting on one can fetch the authoritative format directly, with no scraping.
+const SpecMarkdownURL = "https://expectedload.dev/spec.md"
+
+// Example returns a minimal, copy-pasteable expected-load declaration in the
+// comment grammar for the given language: the three core AI load fields, placed
+// immediately above the call. A URL alone tells a reader (or an agent acting on
+// a missing-expected-load diagnostic) that a declaration is needed but not how
+// to write one in this language — this gives them the exact syntax. The full
+// field set and meta fields live at SpecURL.
+func Example(s Syntax) string {
+	switch s {
+	case Python:
+		return "# expected-load:\n" +
+			"#   monthly_calls: 100_000\n" +
+			"#   avg_input_tokens: 1_200\n" +
+			"#   avg_output_tokens: 500"
+	case GoDirective:
+		return "//expected-load:\n" +
+			"//  monthly_calls: 100_000\n" +
+			"//  avg_input_tokens: 1_200\n" +
+			"//  avg_output_tokens: 500"
+	case Rustdoc:
+		return "/// expected-load:\n" +
+			"///   monthly_calls: 100_000\n" +
+			"///   avg_input_tokens: 1_200\n" +
+			"///   avg_output_tokens: 500"
+	case Terraform:
+		return "# expected-load:\n" +
+			"#   monthly_calls: 100_000\n" +
+			"#   avg_input_tokens: 1_200\n" +
+			"#   avg_output_tokens: 500"
+	default: // JSDoc, Javadoc
+		return "/**\n" +
+			" * @expected-load\n" +
+			" *   monthly_calls: 100_000\n" +
+			" *   avg_input_tokens: 1_200\n" +
+			" *   avg_output_tokens: 500\n" +
+			" */"
+	}
+}
+
 // Syntax selects which comment grammar a frontend should strip before the
 // shared key/value parser runs.
 type Syntax int

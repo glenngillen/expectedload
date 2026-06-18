@@ -171,10 +171,10 @@ func build(pairs []orderedPair) (*ExpectedLoad, []Diagnostic) {
 		}
 	}
 
-	// Point every diagnostic at the spec so authors (and tools/agents acting on
-	// them) know where to find the format and how to populate the data.
+	// Point every diagnostic at the raw spec Markdown so authors (and tools/agents
+	// acting on them) can fetch the format and field rules directly.
 	for i := range diags {
-		diags[i].Message += " (see " + SpecURL + ")"
+		diags[i].Message += " (see " + SpecMarkdownURL + ")"
 	}
 
 	return el, diags
