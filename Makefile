@@ -35,7 +35,7 @@ build-all:
 test:
 	go test ./...
 
-## validate: run the Infracost CLI's plugin conformance suite with fixtures
+## validate: run the Infracost CLI's binary conformance checks
 # The gate greps the subcommand listing because the CLI (cobra) prints help and
 # exits 0 for unknown subcommands, so `infracost plugin validate --help` alone
 # would pass spuriously on CLIs without validate support.

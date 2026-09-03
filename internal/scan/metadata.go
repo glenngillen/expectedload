@@ -23,10 +23,9 @@ const (
 	CanonicalName = "infracost/expectedload"
 	// DisplayName is shown in CLI output.
 	DisplayName = "Expected Load"
-	// Priority 45 keeps expected-load in the weak-signal band (40+): every
-	// extension it claims is owned by another tool first (Terraform=10,
-	// ARM=25, CloudFormation=30).
-	Priority uint32 = 45
+	// Priority uses the SDK-recommended default. Expected-load identifies
+	// individual files, so it need not preempt directory-oriented parsers.
+	Priority uint32 = 0
 	// SupportsDirectories is true because declarations are scattered across a
 	// source tree rather than concentrated in one file.
 	SupportsDirectories = true

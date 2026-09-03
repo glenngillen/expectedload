@@ -35,7 +35,7 @@ func TestGetParserConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.GetIdentificationPriority() != 45 || resp.GetConfigFileProjectType() != "expectedload" {
+	if resp.GetIdentificationPriority() != 0 || resp.GetConfigFileProjectType() != "expectedload" {
 		t.Fatalf("unexpected parser config: %+v", resp)
 	}
 }
@@ -55,8 +55,12 @@ func TestIdentifyProjects(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if resp.GetDirectory() != tc.want {
-				t.Errorf("directory = %v, want %v", resp.GetDirectory(), tc.want)
+			got := len(resp.GetFiles()) > 0
+			if resp.GetDirectory() {
+				t.Error("expected-load files must not claim the whole directory")
+			}
+			if got != tc.want {
+				t.Errorf("identified files = %v, want match=%v", resp.GetFiles(), tc.want)
 			}
 		})
 	}

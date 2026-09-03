@@ -8,9 +8,11 @@ The binary implements the generic `infracost.plugin` contract documented by
 - Register `PluginService` and `ParserService` on the same gRPC server.
 - `GetPluginInfo` reports `infracost/expectedload`, its build version, and type
   `PARSER`.
-- `GetParserConfig` reports priority 45 and project type `expectedload`.
-- `IdentifyProjects` claims a directory only when a supported top-level source
-  file contains an expected-load marker.
+- `GetParserConfig` reports the default priority 0 and project type
+  `expectedload`.
+- `IdentifyProjects` returns marker-bearing top-level source files as individual
+  projects. It does not claim the whole directory, so annotations can coexist
+  with directory-oriented Terraform and other parsers.
 - `Parse` returns diagnostics and a provider-agnostic `tree.Tree`.
 - Use a tagged `github.com/infracost/proto` release. No feature-branch
   pseudo-version or `replace` directive is required.

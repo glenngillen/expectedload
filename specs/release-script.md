@@ -16,7 +16,7 @@ A single script that generates the release files — per-platform archives plus 
 
 ## Acceptance Criteria
 - [ ] `make release` on a clean checkout produces six archives (one per platform in the matrix) and `checksums.txt` in `dist/`.
-- [ ] Extracting any archive yields a binary with the exact SDK-mandated filename that runs and reports the injected version.
+- [ ] Extracting any archive yields a conventionally named binary that runs, reports the injected version, and identifies itself through `GetPluginInfo`.
 - [ ] `shasum -a 256 -c checksums.txt` passes inside `dist/`.
 - [ ] A failing test aborts the script with a non-zero exit before any artifact is written.
 

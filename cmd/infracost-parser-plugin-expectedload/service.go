@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
 
 	"github.com/infracost/expectedload/internal/scan"
 	pluginpb "github.com/infracost/proto/gen/go/infracost/plugin"
@@ -30,10 +33,21 @@ func (s *service) GetParserConfig(_ context.Context, _ *pluginpb.GetParserConfig
 }
 
 func (s *service) IdentifyProjects(_ context.Context, req *pluginpb.IdentifyProjectsRequest) (*pluginpb.IdentifyProjectsResponse, error) {
-	if req == nil || req.GetDirectory() == "" || !scan.DetectPath(req.GetDirectory()) {
+	if req == nil || req.GetDirectory() == "" {
 		return &pluginpb.IdentifyProjectsResponse{}, nil
 	}
-	return &pluginpb.IdentifyProjectsResponse{Directory: true}, nil
+	entries, err := os.ReadDir(req.GetDirectory())
+	if err != nil {
+		return &pluginpb.IdentifyProjectsResponse{}, nil
+	}
+	files := make([]string, 0)
+	for _, entry := range entries {
+		if !entry.IsDir() && scan.DetectPath(filepath.Join(req.GetDirectory(), entry.Name())) {
+			files = append(files, entry.Name())
+		}
+	}
+	sort.Strings(files)
+	return &pluginpb.IdentifyProjectsResponse{Files: files}, nil
 }
 
 func (s *service) Parse(_ context.Context, req *pluginpb.ParseRequest) (*pluginpb.ParseResponse, error) {

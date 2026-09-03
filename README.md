@@ -64,10 +64,10 @@ The plugin implements the shared `infracost.plugin` contract:
 
 - **GetPluginInfo** — canonical name `infracost/expectedload`, version and
   metadata, with type `PARSER`.
-- **GetParserConfig** — identification priority 45 and project type
+- **GetParserConfig** — default identification priority 0 and project type
   `expectedload`.
 - **IdentifyProjects** — content-sniffs top-level supported files (bounded to
-  the first 256 KB) and claims directories containing an expected-load marker.
+  the first 256 KB) and returns marker-bearing files as individual projects.
 - **Parse** — walks the project (skipping `node_modules`,
   `vendor`, `.git`, `.terraform`), extracts comment blocks per syntax, and
   emits one declaration per site with repo-relative file/line locations.

@@ -4,7 +4,8 @@ The binary must pass the CLI's `infracost plugin validate <binary>` checks:
 
 1. Start with the shared handshake and dispense key.
 2. Return valid parser identity from `GetPluginInfo`.
-3. Return valid settings from `GetParserConfig`.
+3. Return project type `expectedload` and default priority 0 from
+   `GetParserConfig`.
 4. Serve `IdentifyProjects` and `Parse` through `ParserService`.
 
 The fixture suite covers identification, parsing across every supported
