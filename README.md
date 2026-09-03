@@ -22,6 +22,19 @@ resource "aws_lambda_function" "api" { ... }
 export async function summarizeTicket(body: string) { ... }
 ```
 
+## Declaration syntax
+
+A declaration is a comment containing the marker (`expected-load`,
+`expected load`, `@expected-load`, case-insensitive, optional colon) followed
+by `key: value` or `key = value` pairs — inline on the marker line or as an
+indented block below it. Keys normalize to snake_case (`monthlyCalls`,
+`monthly-calls`, and `monthly_calls` are the same field). Values are integers
+(`_` and `,` separators tolerated). Meta fields: `version` (int, default 1),
+`confidence` (`low|medium|high`), `source` (`manual|observed|estimated`),
+`last_updated` (ISO-8601 date). Unknown fields are kept for forward
+compatibility; a near-miss of a known field produces a "did you mean"
+warning diagnostic.
+
 This repo is two things:
 
 1. **A shared Go library** — the root package `github.com/glenngillen/expectedload`,
@@ -122,16 +135,3 @@ make validate
 This runs `infracost plugin validate` against the built binary. The fixtures
 in `testdata/fixtures/` are covered by `go test ./...`, which exercises
 identification, parsing, tree output, and diagnostics for every syntax.
-
-## Declaration reference
-
-A declaration is a comment containing the marker (`expected-load`,
-`expected load`, `@expected-load`, case-insensitive, optional colon) followed
-by `key: value` or `key = value` pairs — inline on the marker line or as an
-indented block below it. Keys normalize to snake_case (`monthlyCalls`,
-`monthly-calls`, and `monthly_calls` are the same field). Values are integers
-(`_` and `,` separators tolerated). Meta fields: `version` (int, default 1),
-`confidence` (`low|medium|high`), `source` (`manual|observed|estimated`),
-`last_updated` (ISO-8601 date). Unknown fields are kept for forward
-compatibility; a near-miss of a known field produces a "did you mean"
-warning diagnostic.
