@@ -20,7 +20,7 @@ const (
 	// CanonicalName is the plugin's identity in registry/namespace/name form.
 	// The repo lives in the infracost org, so it uses the reserved official
 	// namespace.
-	CanonicalName = "infracost/expectedload"
+	CanonicalName = "glenngillen/expectedload"
 	// DisplayName is shown in CLI output.
 	DisplayName = "Expected Load"
 	// Priority uses the SDK-recommended default. Expected-load identifies

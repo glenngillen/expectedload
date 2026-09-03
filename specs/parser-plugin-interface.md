@@ -6,7 +6,7 @@ The binary implements the generic `infracost.plugin` contract documented by
 - Handshake: `INFRACOST_PLUGIN=de8c7e96-497c-4168-80c4-fc875c8ce764`.
 - Dispense key: `plugin`.
 - Register `PluginService` and `ParserService` on the same gRPC server.
-- `GetPluginInfo` reports `infracost/expectedload`, its build version, and type
+- `GetPluginInfo` reports `glenngillen/expectedload`, its build version, and type
   `PARSER`.
 - `GetParserConfig` reports the default priority 0 and project type
   `expectedload`.

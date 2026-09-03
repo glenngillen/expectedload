@@ -23,7 +23,7 @@ func (s *service) GetPluginInfo(_ context.Context, _ *pluginpb.GetPluginInfoRequ
 	return &pluginpb.GetPluginInfoResponse{
 		Type: pluginpb.PluginType_PARSER, Name: scan.CanonicalName, Version: version,
 		Description: "Extract expected-load declarations from source-code comments",
-		Url:         "https://github.com/infracost/expectedload", Author: "Infracost",
+		Url:         "https://github.com/glenngillen/expectedload-plugin", Author: "Glenn Gillen",
 	}, nil
 }
 

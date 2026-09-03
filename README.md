@@ -62,7 +62,7 @@ Place the binary in the Infracost CLI's plugin directory. The CLI launches it,
 calls `GetPluginInfo`, and identifies it as a parser from the returned type.
 The plugin implements the shared `infracost.plugin` contract:
 
-- **GetPluginInfo** — canonical name `infracost/expectedload`, version and
+- **GetPluginInfo** — canonical name `glenngillen/expectedload`, version and
   metadata, with type `PARSER`.
 - **GetParserConfig** — default identification priority 0 and project type
   `expectedload`.
