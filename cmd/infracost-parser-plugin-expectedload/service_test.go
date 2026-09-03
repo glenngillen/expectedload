@@ -22,7 +22,7 @@ func TestGetPluginInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.GetName() != "infracost/expectedload" || resp.GetType() != pluginpb.PluginType_PARSER {
+	if resp.GetName() != "glenngillen/expectedload" || resp.GetType() != pluginpb.PluginType_PARSER {
 		t.Fatalf("unexpected plugin info: %+v", resp)
 	}
 	if resp.GetVersion() != version {
