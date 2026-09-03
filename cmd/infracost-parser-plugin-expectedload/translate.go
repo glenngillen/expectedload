@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/infracost/expectedload"
-	"github.com/infracost/expectedload/internal/scan"
+	"github.com/glenngillen/expectedload"
+	"github.com/glenngillen/expectedload/internal/scan"
 	"github.com/infracost/proto/gen/go/infracost/parser"
 	"github.com/infracost/proto/gen/go/infracost/tree"
 )

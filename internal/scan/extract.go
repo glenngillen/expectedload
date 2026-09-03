@@ -3,7 +3,7 @@ package scan
 import (
 	"strings"
 
-	"github.com/infracost/expectedload"
+	"github.com/glenngillen/expectedload"
 )
 
 // commentBlock is one contiguous comment (a run of line comments, one block

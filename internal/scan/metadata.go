@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/infracost/expectedload"
+	"github.com/glenngillen/expectedload"
 )
 
 // Plugin metadata returned by GetPluginInfo and GetParserConfig. See

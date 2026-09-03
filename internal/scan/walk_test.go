@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/infracost/expectedload"
+	"github.com/glenngillen/expectedload"
 )
 
 func TestScanMixedFixtureTree(t *testing.T) {
