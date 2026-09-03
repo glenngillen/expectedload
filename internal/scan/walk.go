@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/infracost/expectedload"
+	"github.com/glenngillen/expectedload"
 )
 
 // Declaration is one parsed expected-load block located in a source file.

@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/infracost/expectedload"
+	"github.com/glenngillen/expectedload"
 )
 
 // sniffLimit bounds how much of a file Detect reads. A marker beyond the first

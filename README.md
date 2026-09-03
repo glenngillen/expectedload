@@ -24,7 +24,7 @@ export async function summarizeTicket(body: string) { ... }
 
 This repo is two things:
 
-1. **A shared Go library** — the root package `github.com/infracost/expectedload`,
+1. **A shared Go library** — the root package `github.com/glenngillen/expectedload`,
    dependency-free (standard library only), imported by tools that need to read
    the same declaration convention.
 2. **An Infracost parser plugin** — `cmd/infracost-parser-plugin-expectedload`,
@@ -34,7 +34,7 @@ This repo is two things:
 ## Using the library
 
 ```go
-import "github.com/infracost/expectedload"
+import "github.com/glenngillen/expectedload"
 
 load, diags := expectedload.ParseComment(expectedload.JSDoc, comment)
 if load != nil {

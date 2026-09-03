@@ -1,4 +1,4 @@
-module github.com/infracost/expectedload
+module github.com/glenngillen/expectedload
 
 go 1.25.0
 

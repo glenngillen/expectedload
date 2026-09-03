@@ -1,7 +1,7 @@
 // infracost-parser-plugin-expectedload is an Infracost parser plugin that
 // extracts `expected-load` declarations from source-code comments (Terraform,
 // TypeScript/JavaScript, Python, Go, Java/Kotlin, Rust) using the
-// github.com/infracost/expectedload library.
+// github.com/glenngillen/expectedload library.
 //
 // The Infracost CLI spawns this binary and talks to it over gRPC via the
 // HashiCorp go-plugin framework; it is not meant to be run by hand. Running it

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/infracost/expectedload/internal/scan"
+	"github.com/glenngillen/expectedload/internal/scan"
 	pluginpb "github.com/infracost/proto/gen/go/infracost/plugin"
 )
 
@@ -23,7 +23,7 @@ func (s *service) GetPluginInfo(_ context.Context, _ *pluginpb.GetPluginInfoRequ
 	return &pluginpb.GetPluginInfoResponse{
 		Type: pluginpb.PluginType_PARSER, Name: scan.CanonicalName, Version: version,
 		Description: "Extract expected-load declarations from source-code comments",
-		Url:         "https://github.com/glenngillen/expectedload-plugin", Author: "Glenn Gillen",
+		Url:         "https://github.com/glenngillen/expectedload", Author: "Glenn Gillen",
 	}, nil
 }
 
