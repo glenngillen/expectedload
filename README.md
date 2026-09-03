@@ -89,9 +89,29 @@ make clean
 `dist/infracost-parser-plugin-expectedload_<version>_<os>_<arch>.tar.gz`
 (`.zip` for Windows) — each containing the exactly-named binary, LICENSE, and
 this README — plus a SHA-256 `checksums.txt`. The version comes from `$VERSION`
-if set, else the exact git tag, else `<last-tag>-dev+<sha>`. Publishing the
-artifacts (CI, GitHub Releases, registry manifests) is deliberately out of
-scope of the script.
+if set, else the exact git tag, else `<last-tag>-dev+<sha>`.
+
+### Continuous integration
+
+Two GitHub Actions workflows drive this:
+
+- `.github/workflows/test.yml` runs `go vet ./...` and `make test` on every
+  pull request and on pushes to `main`.
+- `.github/workflows/release.yml` runs `make release` when a `v*.*.*` tag is
+  pushed (or on manual dispatch), then creates a **draft** GitHub Release and
+  uploads the six archives and `checksums.txt` for a maintainer to review and
+  publish. All six platforms are cross-compiled on a single Linux runner
+  (pure-Go, `CGO_ENABLED=0`).
+
+To cut a release: `git tag v0.1.0 && git push origin v0.1.0`, then publish the
+draft the workflow creates.
+
+**Publication destination.** Releases are published as GitHub Releases on this
+repository. Community Infracost parser plugins are distributed as standalone
+binaries that users drop into the CLI's plugin directory (see the parser
+[SPEC](https://github.com/infracost/parser-plugin-sdk) "Installing and
+testing") — no central registry registration is required, so there is no
+registry manifest to update.
 
 ## Validating against the Infracost CLI
 

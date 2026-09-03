@@ -54,8 +54,18 @@ Implement an Infracost parser plugin around the existing stdlib-only
 
 ## 5. Remaining release work
 
-- [ ] Decide the publication destination and add CI/release automation.
-- [ ] Add the plugin to the registry manifest when it is ready for distribution.
+- [x] Decide the publication destination and add CI/release automation.
+  Destination: GitHub Releases on this repository (community parser plugins are
+  distributed as standalone binaries dropped into the CLI plugin directory; the
+  SDK requires no registry registration). Added `.github/workflows/test.yml`
+  (vet + test on PRs and pushes to `main`) and `.github/workflows/release.yml`
+  (on a `v*.*.*` tag or manual dispatch, runs `make release` and uploads the
+  six archives + `checksums.txt` to a draft GitHub Release).
+- [~] Add the plugin to the registry manifest when it is ready for distribution.
+  Not actionable: the current parser SDK (`../parser-plugin-sdk/parser/SPEC.md`)
+  states "No registration with Infracost is required — a plugin only needs to be
+  discoverable in the plugin directory," and defines no registry manifest format.
+  Deferred until such a manifest exists.
 
 The former plan's parser-specific cookie, `parser` dispense key, five-RPC API,
 priority 45, directory claim, proto pseudo-version, and deferred validation
