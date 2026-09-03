@@ -1,0 +1,5 @@
+/.synapse/
+/dist/
+/infracost-parser-plugin-expectedload
+/infracost-parser-plugin-expectedload.exe
+/infracost-parser-plugin-expectedload-debug

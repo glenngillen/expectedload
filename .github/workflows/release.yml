@@ -1,0 +1,80 @@
+name: release
+
+# Publication destination: GitHub Releases on this repository. Community
+# Infracost parser plugins are distributed as standalone binaries the user
+# drops into the CLI's plugin directory (see parser SPEC "Installing and
+# testing"); no central registry registration is required. Pushing a v*.*.*
+# tag builds every platform and attaches the archives + checksums to a draft
+# GitHub Release for a maintainer to review and publish.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build and release, e.g. v0.1.0"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # create the GitHub Release and upload assets
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          case "$VERSION" in
+            v*) ;;
+            *) VERSION="v${VERSION}" ;;
+          esac
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+      # release.sh runs `go test ./...` first and aborts on failure, so a
+      # broken build never produces artifacts. It cross-compiles all six
+      # platforms (pure Go, CGO_ENABLED=0) on this single host.
+      - name: Build release artifacts
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: make release
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          if ! gh release view "$VERSION" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release create "$VERSION" \
+              --repo "${{ github.repository }}" \
+              --title "$VERSION" \
+              --draft \
+              --generate-notes
+          else
+            gh release edit "$VERSION" --repo "${{ github.repository }}" --draft
+          fi
+
+      - name: Upload artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          gh release upload "$VERSION" ./dist/* \
+            --repo "${{ github.repository }}" \
+            --clobber
