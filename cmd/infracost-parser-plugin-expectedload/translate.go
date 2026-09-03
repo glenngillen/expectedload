@@ -9,9 +9,6 @@ import (
 	"github.com/infracost/expectedload"
 	"github.com/infracost/expectedload/internal/scan"
 	"github.com/infracost/proto/gen/go/infracost/parser"
-	"github.com/infracost/proto/gen/go/infracost/parser/cloudformation"
-	"github.com/infracost/proto/gen/go/infracost/parser/hcl"
-	"github.com/infracost/proto/gen/go/infracost/parser/terraform"
 	"github.com/infracost/proto/gen/go/infracost/tree"
 )
 
@@ -137,72 +134,4 @@ func toTree(res scan.Result, prefix string) *tree.Tree {
 			"expectedload": {Services: map[string]*tree.Service{"expected-load": svc}},
 		},
 	}
-}
-
-// toTerraformResult renders declarations into the terraform result variant:
-// one resource per site, load fields as an HCL object value.
-func toTerraformResult(res scan.Result, prefix string) *terraform.ModuleResult {
-	out := &terraform.ModuleResult{}
-	for _, d := range res.Declarations {
-		file := rebase(prefix, d.File)
-		mv := &hcl.MapValue{IsObject: true}
-		for _, k := range sortedFields(d.Load) {
-			mv.Entries = append(mv.Entries, &hcl.MapEntry{Key: k, Value: &hcl.Value{
-				Value: &hcl.Value_Primitive{Primitive: &hcl.PrimitiveValue{
-					Value: &hcl.PrimitiveValue_NumberValue{NumberValue: strconv.FormatInt(d.Load.Fields[k], 10)},
-				}},
-			}})
-		}
-		for _, kv := range metaFields(d.Load) {
-			mv.Entries = append(mv.Entries, &hcl.MapEntry{Key: kv[0], Value: &hcl.Value{
-				Value: &hcl.Value_Primitive{Primitive: &hcl.PrimitiveValue{
-					Value: &hcl.PrimitiveValue_StringValue{StringValue: kv[1]},
-				}},
-			}})
-		}
-
-		out.Resources = append(out.Resources, &terraform.Resource{
-			Id:          declID(file, d.Line),
-			Name:        declID(file, d.Line),
-			Type:        resourceType,
-			SourceRange: sourceRange(file, d.Line),
-			Supported:   false,
-			Free:        true,
-			Data:        &hcl.Value{Value: &hcl.Value_Map{Map: mv}},
-		})
-	}
-	return out
-}
-
-// toCloudformationResult renders declarations into the cloudformation result
-// variant: one resource per site, load fields in the metadata map.
-func toCloudformationResult(res scan.Result, prefix string) *cloudformation.Result {
-	out := &cloudformation.Result{Resources: map[string]*cloudformation.Resource{}}
-	for _, d := range res.Declarations {
-		file := rebase(prefix, d.File)
-		meta := map[string]*cloudformation.Value{}
-		for _, k := range sortedFields(d.Load) {
-			meta[k] = &cloudformation.Value{Value: &cloudformation.Value_Scalar{Scalar: &cloudformation.ScalarValue{
-				Type:  cloudformation.ScalarType_SCALAR_TYPE_INT,
-				Value: &cloudformation.ScalarValue_IntValue{IntValue: d.Load.Fields[k]},
-			}}}
-		}
-		for _, kv := range metaFields(d.Load) {
-			meta[kv[0]] = &cloudformation.Value{Value: &cloudformation.Value_Scalar{Scalar: &cloudformation.ScalarValue{
-				Type:  cloudformation.ScalarType_SCALAR_TYPE_STRING,
-				Value: &cloudformation.ScalarValue_StringValue{StringValue: kv[1]},
-			}}}
-		}
-
-		id := declID(file, d.Line)
-		out.Resources[id] = &cloudformation.Resource{
-			Id:          id,
-			Type:        resourceType,
-			Metadata:    meta,
-			SourceRange: sourceRange(file, d.Line),
-			Supported:   false,
-			Free:        true,
-		}
-	}
-	return out
 }

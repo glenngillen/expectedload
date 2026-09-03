@@ -14,19 +14,19 @@ import (
 	"github.com/infracost/expectedload"
 )
 
-// Plugin metadata returned by the Describe RPC. See
+// Plugin metadata returned by GetPluginInfo and GetParserConfig. See
 // specs/expected-load-detection.md for the rationale behind each value.
 const (
 	// CanonicalName is the plugin's identity in registry/namespace/name form.
 	// The repo lives in the infracost org, so it uses the reserved official
 	// namespace.
-	CanonicalName = "plugins.infracost.io/infracost/expectedload"
+	CanonicalName = "infracost/expectedload"
 	// DisplayName is shown in CLI output.
 	DisplayName = "Expected Load"
 	// Priority 45 keeps expected-load in the weak-signal band (40+): every
 	// extension it claims is owned by another tool first (Terraform=10,
 	// ARM=25, CloudFormation=30).
-	Priority = 45
+	Priority uint32 = 45
 	// SupportsDirectories is true because declarations are scattered across a
 	// source tree rather than concentrated in one file.
 	SupportsDirectories = true
@@ -49,7 +49,7 @@ var syntaxByExt = map[string]expectedload.Syntax{
 	".rs":   expectedload.Rustdoc,
 }
 
-// FileExtensions returns the extensions the plugin may handle, for Describe.
+// FileExtensions returns the extensions the scanner can handle.
 func FileExtensions() []string {
 	return []string{".tf", ".ts", ".tsx", ".js", ".jsx", ".py", ".go", ".java", ".kt", ".rs"}
 }

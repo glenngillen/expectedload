@@ -16,7 +16,7 @@ The repo's existing role — the shared, stdlib-only `expectedload` comment-pars
 - [ ] README documents both usages.
 
 ## Edge Cases
-- The module must never gain `replace` directives — they leak to library consumers and break `go get`. All plugin dependencies are resolvable published versions — tagged releases, plus one documented pseudo-version pin for `infracost/proto` (see `parser-plugin-interface.md`) — so a single module suffices.
+- The module must never gain `replace` directives — they leak to library consumers and break `go get`. All plugin dependencies use published tagged releases, so a single module suffices.
 
 ## Dependencies
 - Topics: `parser-plugin-interface.md`.

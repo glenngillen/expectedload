@@ -58,25 +58,22 @@ make build
 CGO_ENABLED=0 go build -o infracost-parser-plugin-expectedload ./cmd/infracost-parser-plugin-expectedload
 ```
 
-Place the binary in the Infracost CLI's plugin directory; the CLI discovers it
-by its filename. The plugin implements the current parser-plugin SDK
-(`Describe`, `Detect`, `Initialize`, `Parse`, `ParseToTree`):
+Place the binary in the Infracost CLI's plugin directory. The CLI launches it,
+calls `GetPluginInfo`, and identifies it as a parser from the returned type.
+The plugin implements the shared `infracost.plugin` contract:
 
-- **Describe** — canonical name `plugins.infracost.io/infracost/expectedload`,
-  priority 45 (weak-signal band: it never outranks the Terraform/ARM/
-  CloudFormation parsers on shared extensions), extensions
-  `.tf .ts .tsx .js .jsx .py .go .java .kt .rs`, directory support.
-- **Detect** — content-sniffs (bounded to the first 256 KB) for an
-  expected-load marker; directories are checked one level deep only.
-- **Parse / ParseToTree** — walks the project (skipping `node_modules`,
+- **GetPluginInfo** — canonical name `infracost/expectedload`, version and
+  metadata, with type `PARSER`.
+- **GetParserConfig** — identification priority 45 and project type
+  `expectedload`.
+- **IdentifyProjects** — content-sniffs top-level supported files (bounded to
+  the first 256 KB) and claims directories containing an expected-load marker.
+- **Parse** — walks the project (skipping `node_modules`,
   `vendor`, `.git`, `.terraform`), extracts comment blocks per syntax, and
   emits one declaration per site with repo-relative file/line locations.
   Malformed declarations become warning/error diagnostics without failing the
-  parse. `ParseToTree` is the primary output: one tree resource per
-  declaration, load fields as attributes.
-
-The binary only speaks the new parser-plugin protocol; it is not loadable by
-CLI releases that predate the plugin-architecture work.
+  parse. The response contains one tree resource per declaration, with load
+  fields represented as attributes.
 
 ## Building and releasing
 
@@ -102,16 +99,9 @@ scope of the script.
 make validate
 ```
 
-This runs `infracost plugin validate` against the built binary with the
-fixtures in `testdata/fixtures/`. The `plugin validate` subcommand is not in
-released CLI versions yet — it lives on the CLI's
-`feature/plugin-architecture-refactor` branch. To build that CLI locally, check
-out the `infracost/proto` repo on the same branch as a sibling directory named
-`proto` (the CLI branch `replace`s the proto module with `../proto`), then
-`go build` the CLI. Until you have such a build, `make validate` fails with an
-actionable message; the same fixtures are covered by this repo's own Go tests
-(`go test ./...`), which exercise detection and parsing for every syntax
-without needing the CLI.
+This runs `infracost plugin validate` against the built binary. The fixtures
+in `testdata/fixtures/` are covered by `go test ./...`, which exercises
+identification, parsing, tree output, and diagnostics for every syntax.
 
 ## Declaration reference
 

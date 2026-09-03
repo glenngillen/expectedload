@@ -43,11 +43,10 @@ validate: build
 	@if ! command -v infracost >/dev/null 2>&1 || \
 		! infracost plugin --help 2>/dev/null | grep -qE '^[[:space:]]+validate([[:space:]]|$$)'; then \
 		echo "error: your infracost CLI does not support 'plugin validate'." >&2; \
-		echo "It ships with the CLI's plugin-architecture work; build the CLI from" >&2; \
-		echo "its feature/plugin-architecture-refactor branch (see README.md)." >&2; \
+		echo "Install or build a current Infracost CLI (see README.md)." >&2; \
 		exit 1; \
 	fi
-	infracost plugin validate ./$(BINARY) $(foreach f,$(FIXTURES),--fixture testdata/fixtures/$(f))
+	infracost plugin validate ./$(BINARY)
 
 ## release: test, build all platforms, package archives + checksums into dist/
 release:

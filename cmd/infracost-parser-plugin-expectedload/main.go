@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hashicorp/go-plugin"
-	"github.com/infracost/proto/gen/go/infracost/parser/api"
+	goplugin "github.com/hashicorp/go-plugin"
+	pluginpb "github.com/infracost/proto/gen/go/infracost/plugin"
 	"google.golang.org/grpc"
 )
 
@@ -24,21 +24,23 @@ var version = "dev"
 const maxMessageSize = 64 * 1024 * 1024
 
 var (
-	_ plugin.Plugin     = (*parserPlugin)(nil)
-	_ plugin.GRPCPlugin = (*parserPlugin)(nil)
+	_ goplugin.Plugin     = (*parserPlugin)(nil)
+	_ goplugin.GRPCPlugin = (*parserPlugin)(nil)
 )
 
 // parserPlugin wires the ParserService implementation into go-plugin.
 type parserPlugin struct {
-	plugin.NetRPCUnsupportedPlugin
+	goplugin.NetRPCUnsupportedPlugin
 }
 
-func (p *parserPlugin) GRPCServer(_ *plugin.GRPCBroker, g *grpc.Server) error {
-	api.RegisterParserServiceServer(g, &service{})
+func (p *parserPlugin) GRPCServer(_ *goplugin.GRPCBroker, g *grpc.Server) error {
+	s := &service{}
+	pluginpb.RegisterPluginServiceServer(g, s)
+	pluginpb.RegisterParserServiceServer(g, s)
 	return nil
 }
 
-func (p *parserPlugin) GRPCClient(_ context.Context, _ *plugin.GRPCBroker, _ *grpc.ClientConn) (any, error) {
+func (p *parserPlugin) GRPCClient(_ context.Context, _ *goplugin.GRPCBroker, _ *grpc.ClientConn) (any, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
@@ -50,14 +52,14 @@ func main() {
 		}
 	}
 
-	plugin.Serve(&plugin.ServeConfig{
-		HandshakeConfig: plugin.HandshakeConfig{
+	goplugin.Serve(&goplugin.ServeConfig{
+		HandshakeConfig: goplugin.HandshakeConfig{
 			ProtocolVersion:  1,
-			MagicCookieKey:   "INFRACOST_PARSER_PLUGIN_MAGIC_COOKIE",
-			MagicCookieValue: "ac92b06c592f",
+			MagicCookieKey:   "INFRACOST_PLUGIN",
+			MagicCookieValue: "de8c7e96-497c-4168-80c4-fc875c8ce764",
 		},
-		Plugins: map[string]plugin.Plugin{
-			"parser": new(parserPlugin),
+		Plugins: map[string]goplugin.Plugin{
+			"plugin": new(parserPlugin),
 		},
 		GRPCServer: func(opts []grpc.ServerOption) *grpc.Server {
 			opts = append(opts,
